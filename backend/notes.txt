@@ -1,0 +1,2 @@
+# Test code
+curl -X POST http://localhost:8080/api/word -H "Content-Type: application/json" -d '{"word":"hello"}'
