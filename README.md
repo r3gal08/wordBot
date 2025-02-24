@@ -7,7 +7,7 @@ the words (quizzing more often on new words, less-often on old ones that the use
 additional functionality to allow a user to fill in additional information such as where they found the word (from a book
 , news article, etc) which may assist in giving a more tailored response to what the user is genuinely interested in
 (likely leveraging some kind of LLM). By doing so, my hypothesis is a user will learn a word more easily as it is already
-tied to pre-existing thought processes and will further solidify their understanding.
+tied to a pre-existing thought processes and will further solidify their understanding.
 
 - For my frontend I am choosing to use the Flutter framework once again
 - For my backend I am choosing to use Golang as it is a language I am wanting to learn :)
