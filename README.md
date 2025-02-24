@@ -1,16 +1,13 @@
-# word_bot
+# wordBot
 
-My new word App project for word definition learning
+This is a new word app project I've been building for quickly getting definitions for words I want to learn.
+The end goal here is to eventually have a backend containerized service for handling json requests and returning 
+word definitions, storing a database of words a user wants to learn, "smart-quizzing" the user to ensure they are learning
+the words (quizzing more often on new words, less-often on old ones that the user has shown they understand). I may add
+additional functionality to allow a user to fill in additional information such as where they found the word (from a book
+, news article, etc) which may assist in giving a more tailored response to what the user is genuinely interested in
+(likely leveraging some kind of LLM). By doing so, my hypothesis is a user will learn a word more easily as it is already
+tied to pre-existing thought processes and will further solidify their understanding.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- For my frontend I am choosing to use the Flutter framework once again
+- For my backend I am choosing to use Golang as it is a language I am wanting to learn :)
