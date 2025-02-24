@@ -41,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    // TODO: Export local host, port, url, etc to a separate file similar to how I did in my bookBot project
     // Replace with your backend URL
     final url = Uri.parse('http://localhost:8080/api/word');
 
@@ -54,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       if (response.statusCode == 200) {
+        _wordController.clear(); // Clear the text field after success
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Word sent successfully')),
         );
