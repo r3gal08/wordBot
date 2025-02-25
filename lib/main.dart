@@ -51,13 +51,20 @@ class _MyHomePageState extends State<MyHomePage> {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'word': word}),
+        body: jsonEncode({'word': word}), // Convert object to json string
       );
 
+      // TODO: Here we will handle the json response and display the definition
       if (response.statusCode == 200) {
-        _wordController.clear(); // Clear the text field after success
+        // _wordController.clear(); // Clear the text field after success
+
+        // Decode the JSON response
+        final responseData = json.decode(response.body);
+        final receivedWord = responseData['word'];  // TODO: Decode definition here.....
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Word sent successfully')),
+          // const SnackBar(content: Text('Word sent successfully')),
+          SnackBar(content: Text('Received word: $receivedWord')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

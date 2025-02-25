@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+// Create WordRequest struct (similar to classes/objects)
+// Another interesting note here is we are enforcing type safety as we ensure the data we are receiving is a json string
 // Go doesn’t use classes like in object-oriented languages; instead, you define structs to group related fields.
 // back ticks are used for assigning struct tags to attach metadata to a struct field
 // Struct tags must be enclosed in backticks (`), not quotes (""), because they are raw string literals that Go's reflection system reads at runtime.
@@ -16,6 +18,12 @@ type WordRequest struct {
 	Word string `json:"word"`
 }
 
+type WordResponse struct {
+	Word    string `json:"word"`
+	// Definition string `json:"message"`
+}
+
+// wordHandler route (writer and a reader)
 func wordHandler(w http.ResponseWriter, r *http.Request) {
 
     // Reject anything that is not a POST request
@@ -32,15 +40,21 @@ func wordHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	defer r.Body.Close()    // Free resources **after** wordHandler function is executed
+	defer r.Body.Close()                        // Free resources **after** wordHandler function is executed. Fun fact: Goes garbage collector is concurrent
+  	log.Printf("Received word: %s", req.Word)   // SecTODO: Will want to sanitize or validate input here to prevent log injection...
 
-	log.Printf("Received word: %s", req.Word)
+    // Craft HTTP response ...
+    rsp := WordResponse{Word: req.Word} // TODO: We will get word def here
 
-    // Respond to http request
-    // TODO: It is at this point we should be returning contents back to the user such as word definition
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Word received successfully"})
+    w.Header().Set("Content-Type", "application/json")  // set writer header content type (in this case json)
+    w.WriteHeader(http.StatusOK)
+
+    if err := json.NewEncoder(w).Encode(rsp); err != nil {
+        log.Printf("Error encoding JSON response: %v", err)
+        http.Error(w, "D'oh!", http.StatusInternalServerError)
+        return
+    }
+    log.Printf("Response sent successfully: %v", rsp)
 }
 
 func main() {
