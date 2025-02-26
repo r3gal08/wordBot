@@ -60,11 +60,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // Decode the JSON response
         final responseData = json.decode(response.body);
-        final receivedWord = responseData['word'];  // TODO: Decode definition here.....
+        final receivedWord = responseData['word'];
+        final receivedDefinition = responseData['definition'];
+
 
         ScaffoldMessenger.of(context).showSnackBar(
           // const SnackBar(content: Text('Word sent successfully')),
-          SnackBar(content: Text('Received word: $receivedWord')),
+          // SnackBar(content: Text('Received word: $receivedDefinition')),
+          SnackBar(content: Text('Received word: $receivedWord, Definition: $receivedDefinition')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
