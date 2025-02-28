@@ -1,3 +1,3 @@
-module myserver
+module wordBot
 
 go 1.22.11
