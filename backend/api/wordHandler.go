@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"wordBot/dictionary"
 )
 
 type WordRequest struct {
@@ -32,13 +31,14 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	definition, err := dictionary.GetWordDefinition(req.Word)
+	definition, err := dictionary.getWordDefinition(req.Word)
 	if err != nil {
 		log.Printf("D'oh: %v", err)
 		http.Error(w, "Error getting word definition", http.StatusInternalServerError)
 		return
 	}
 
+	// TODO: These fields should be dynamically populated from the dictionary API response
 	rsp := WordResponse{
 		Word:       req.Word,
 		Definition: definition,
