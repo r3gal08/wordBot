@@ -55,6 +55,7 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Construct the response based on the requested attributes
+	// "range" returns both the index and the value of the slice. '_' is used to ignore the index value
 	// TODO: Input sanitization and error handeling
 	// Can add in additional cases here as needed
 	for _, attr := range req.Request {
@@ -65,7 +66,7 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 			rsp.PartOfSpeech = wordData[0].Meanings[0].PartOfSpeech
 		default:
 			log.Printf("Unknown attribute requested: %s", attr)
-			http.Error(w, "Error getting word definition", http.StatusInternalServerError)
+			http.Error(w, "Error getting word data", http.StatusInternalServerError)
 			return
 		}
 	}
