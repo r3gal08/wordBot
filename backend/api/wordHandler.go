@@ -1,5 +1,10 @@
 package api
 
+/*
+TODO: Move implementation to gin framework. It will make the API faster and more efficient
+	  which will allow it to scale better and decrease potential costs of running the server
+*/
+
 import (
 	"encoding/json"
 	"log"
@@ -7,13 +12,19 @@ import (
 	"wordBot/dictionary"
 )
 
+// Struct tags such as json:"word" specify what a field’s name should be when the struct’s
+// contents are serialized into JSON. Without them, the JSON would use the struct’s
+// capitalized field names – a style not as common in JSON.
 type wordRequest struct {
-	Word string `json:"word"`
+	Word    string   `json:"word"`
+	Request []string `json:"request"`
 }
 
+// Can add in additional fields to the struct as needed
 type wordResponse struct {
-	Word       string `json:"word"`
-	Definition string `json:"definition"`
+	Word         string `json:"word,omitempty"`
+	Definition   string `json:"definition,omitempty"`
+	PartOfSpeech string `json:"partofspeech,omitempty"`
 }
 
 func WordHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,17 +43,31 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	definition, err := dictionary.GetWordDefinition(req.Word)
+	wordData, err := dictionary.GetWordData(req.Word)
 	if err != nil {
 		log.Printf("D'oh: %v", err)
 		http.Error(w, "Error getting word definition", http.StatusInternalServerError)
 		return
 	}
 
-	// TODO: These fields should be dynamically populated from the dictionary API response
 	rsp := wordResponse{
-		Word:       req.Word,
-		Definition: definition,
+		Word: wordData[0].Word,
+	}
+
+	// Construct the response based on the requested attributes
+	// TODO: Input sanitization and error handeling
+	// Can add in additional cases here as needed
+	for _, attr := range req.Request {
+		switch attr {
+		case "definition":
+			rsp.Definition = wordData[0].Meanings[0].Definitions[0].Definition
+		case "partofspeech":
+			rsp.PartOfSpeech = wordData[0].Meanings[0].PartOfSpeech
+		default:
+			log.Printf("Unknown attribute requested: %s", attr)
+			http.Error(w, "Error getting word definition", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")

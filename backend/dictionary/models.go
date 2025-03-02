@@ -1,6 +1,6 @@
 package dictionary
 
-type DefinitionResponse []struct {
+type WordData []struct {
 	Word      string `json:"word"`
 	Phonetic  string `json:"phonetic"`
 	Phonetics []struct {

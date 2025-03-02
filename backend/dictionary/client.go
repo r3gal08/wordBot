@@ -9,7 +9,7 @@ import (
 
 const apiURL = "https://api.dictionaryapi.dev/api/v2/entries/en/%s"
 
-func GetWordDefinition(word string) (string, error) {
+func GetWordData(word string) (WordData, error) {
 	url := fmt.Sprintf(apiURL, word)
 
 	response, err := http.Get(url)
@@ -17,23 +17,23 @@ func GetWordDefinition(word string) (string, error) {
 		if err == nil {
 			err = fmt.Errorf("API returned status code: %d", response.StatusCode)
 		}
-		return "", err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var definitionResponse DefinitionResponse
-	if err := json.Unmarshal(body, &definitionResponse); err != nil {
-		return "", err
+	// Load word data into memory
+	var wordData WordData
+	if err := json.Unmarshal(body, &wordData); err != nil || len(wordData) == 0 {
+		if err == nil {
+			err = fmt.Errorf("word data not found for: %s", word)
+		}
+		return nil, err
 	}
 
-	if len(definitionResponse) > 0 && len(definitionResponse[0].Meanings) > 0 && len(definitionResponse[0].Meanings[0].Definitions) > 0 {
-		return definitionResponse[0].Meanings[0].Definitions[0].Definition, nil
-	}
-
-	return "", fmt.Errorf("Definition not found for word: %s", word)
+	return wordData, nil
 }
