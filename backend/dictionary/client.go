@@ -9,7 +9,7 @@ import (
 
 const apiURL = "https://api.dictionaryapi.dev/api/v2/entries/en/%s"
 
-func getWordDefinition(word string) (string, error) {
+func GetWordDefinition(word string) (string, error) {
 	url := fmt.Sprintf(apiURL, word)
 
 	response, err := http.Get(url)
