@@ -6,10 +6,15 @@ TODO: Move implementation to gin framework. It will make the API faster and more
 */
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"wordBot/dictionary"
+
+	"github.com/jackc/pgx/v5"
 )
 
 // Struct tags such as json:"word" specify what a field’s name should be when the struct’s
@@ -25,6 +30,32 @@ type wordResponse struct {
 	Word         string `json:"word,omitempty"`
 	Definition   string `json:"definition,omitempty"`
 	PartOfSpeech string `json:"partofspeech,omitempty"`
+}
+
+// TODO: use os.Getenv("DATABASE_URL") instead of hardcoding the connection string
+const DATABASE_URL = "postgres://postgres:test@localhost:5432"
+
+func queryRow(wr wordResponse) error {
+	log.Printf("word Response test: %v", wr)
+
+	// Connect to the database
+	conn, err := pgx.Connect(context.Background(), DATABASE_URL)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		return fmt.Errorf("unable to connect to database: %v", err)
+	}
+	defer conn.Close(context.Background())
+
+	var greeting string
+	err = conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		return fmt.Errorf("query row failed: %v", err)
+	}
+
+	fmt.Println(greeting)
+
+	return nil
 }
 
 func WordHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +104,13 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+
+	// Querying the database
+	if err := queryRow(rsp); err != nil {
+		log.Printf("D'oh: %v", err)
+		http.Error(w, "Error querying database", http.StatusInternalServerError)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(rsp); err != nil {
 		log.Printf("D'oh: %v", err)

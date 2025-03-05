@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v5"
 )
 
 // Test code for connecting to a PostgreSQL database using pgx
 // This code is not used in the application
-func main() {	
+func main() {
 	// Connect to the database
 	// TODO: Un-hardcode the connection string
 	connStr := "postgres://postgres:test@localhost:5432"
