@@ -116,6 +116,7 @@ func WordHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
+	// TODO: This should happen somewhere else.... but we are testing b'ye
 	// Writing word data to the database
 	if err := writeWordData(rsp); err != nil {
 		log.Printf("D'oh: %v", err)
