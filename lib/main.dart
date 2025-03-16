@@ -51,7 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'word': word}), // Convert object to json string
+        body: jsonEncode({
+          'word': word,
+          "request": ["definition"]
+        }), // Convert object to json string
       );
 
       // TODO: Here we will handle the json response and display the definition
@@ -63,11 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
         final receivedWord = responseData['word'];
         final receivedDefinition = responseData['definition'];
 
-
         ScaffoldMessenger.of(context).showSnackBar(
           // const SnackBar(content: Text('Word sent successfully')),
           // SnackBar(content: Text('Received word: $receivedDefinition')),
-          SnackBar(content: Text('Received word: $receivedWord, Definition: $receivedDefinition')),
+          SnackBar(
+              content: Text(
+                  'Received word: $receivedWord, Definition: $receivedDefinition')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
