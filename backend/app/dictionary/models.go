@@ -18,3 +18,10 @@ type WordData []struct {
 		} `json:"definitions"`
 	} `json:"meanings"`
 }
+
+// Can add in additional fields to the struct as needed
+type WordResponse struct {
+	Word         string `json:"word,omitempty"`
+	Definition   string `json:"definition,omitempty"`
+	PartOfSpeech string `json:"partofspeech,omitempty"`
+}
