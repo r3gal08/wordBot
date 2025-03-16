@@ -11,3 +11,14 @@ tied to a pre-existing thought processes and will further solidify their underst
 
 - For my frontend I am choosing to use the Flutter framework once again
 - For my backend I am choosing to use Golang as it is a language I am wanting to learn :)
+
+---
+
+## Codebase Guide
+
+./backend - backend application code built in go. Also includes docker-compose file and db schema.sql file
+./lib - Core frontend codebase built with flutter and the dart programming language
+
+The remander of the codebase is mostly auto-generated flutter files...
+
+

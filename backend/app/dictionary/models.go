@@ -24,4 +24,5 @@ type WordResponse struct {
 	Word         string `json:"word,omitempty"`
 	Definition   string `json:"definition,omitempty"`
 	PartOfSpeech string `json:"partofspeech,omitempty"`
+	ConfidenceRating int `json:"confidencerating,omitempty"`
 }
