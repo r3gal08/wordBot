@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _wordController = TextEditingController();
 
-  Future<void> _sendWordToBackend() async {
+  Future<void> _sendWordForDefinition() async {
     final String word = _wordController.text.trim();
     if (word.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -67,11 +67,59 @@ class _MyHomePageState extends State<MyHomePage> {
         final receivedDefinition = responseData['definition'];
 
         ScaffoldMessenger.of(context).showSnackBar(
-          // const SnackBar(content: Text('Word sent successfully')),
-          // SnackBar(content: Text('Received word: $receivedDefinition')),
           SnackBar(
               content: Text(
                   'Received word: $receivedWord, Definition: $receivedDefinition')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to send word. Status code: ${response.statusCode}',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> _sendWordToLearn() async {
+    final String word = _wordController.text.trim();
+    if (word.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a word')),
+      );
+      return;
+    }
+
+    // Replace with your backend URL
+    final url = Uri.parse('http://localhost:8080/learnHandler');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'word': word,
+          "request": ["learn"]
+        }), // Convert object to json string
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final receivedWord = responseData['word'];
+        final receivedLearnData = responseData['learnData'];
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Received word: $receivedWord, Learn Data: $receivedLearnData')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -115,8 +163,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _sendWordToBackend,
-              child: const Text('Send'),
+              onPressed: _sendWordForDefinition,
+              child: const Text('Definition'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _sendWordToLearn,
+              child: const Text('Learn'),
             ),
           ],
         ),

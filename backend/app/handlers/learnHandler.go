@@ -7,5 +7,8 @@ import (
 )
 
 func LearnHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("test")
+
+	log.Printf("LearnHandler called")
+
+
 }
