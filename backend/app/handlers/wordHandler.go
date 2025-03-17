@@ -1,4 +1,4 @@
-package api
+package handlers
 
 /*
 TODO: - Move HTTP handler and routing implementation to Gin framework. It will make the API faster and more efficient

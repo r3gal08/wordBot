@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // TODO: Export local host, port, url, etc to a separate file similar to how I did in my bookBot project
     // Replace with your backend URL
-    final url = Uri.parse('http://localhost:8080/api/word');
+    final url = Uri.parse('http://localhost:8080/wordHandler');
 
     try {
       final response = await http.post(
