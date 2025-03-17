@@ -1,3 +1,11 @@
 # Test code
 curl -X POST http://localhost:8080/api/word -H "Content-Type: application/json" -d '{"word":"hello"}' |jq
 curl -X POST http://localhost:8080/api/word -H "Content-Type: application/json" -d '{"word":"hubris","request": ["definition","synonyms"]}' |jq
+
+# Ollama post request
+curl -X POST http://localhost:11434/api/generate      -H "Content-Type: application/json"      -d '{
+           "model": "llama3.1",
+           "system": "Provide a word definition with four possible answers (one correct and three incorrect). The correct answer should be clearly marked. Format the response as follows:\n\nWord: [word]\nDefinition: [definition]\n\nAnswers:\n1. [answer 1]\n2. [answer 2]\n3. [answer 3]\n4. [answer 4]\n\nCorrect Answer: [answer number]",
+           "prompt": "hubris",
+           "stream": false
+         }' |jq

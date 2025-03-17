@@ -162,14 +162,19 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendWordForDefinition,
-              child: const Text('Definition'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendWordToLearn,
-              child: const Text('Learn'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _sendWordForDefinition,
+                  child: const Text('Definition'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _sendWordToLearn,
+                  child: const Text('Learn'),
+                ),
+              ],
             ),
           ],
         ),
