@@ -12,35 +12,18 @@ import (
 	"net/http"
 	"wordBot/dictionary"
 	"wordBot/database"
+	"wordBot/utils"
 )
-
-// Struct tags such as json:"word" specify what a field’s name should be when the struct’s
-// contents are serialized into JSON. Without them, the JSON would use the struct’s
-// capitalized field names – a style not as common in JSON.
-type wordRequest struct {
-	Word    string   `json:"word"`
-	Request []string `json:"request"`
-}
 
 /* TODOS:
 	- Implement input sanitization to prevent SQL injection and ensure valid JSON format.
 	- Create common error handling helper functions to reduce code overhead within this file
 */
 func WordHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		log.Printf("D'oh: StatusMethodNotAllowed")
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var req wordRequest
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&req); err != nil {
-		log.Printf("D'oh: %v", err)
-		http.Error(w, "Bad request", http.StatusBadRequest)
-		return
-	}
-	defer r.Body.Close()
+    req, err := utils.DecodeWordRequest(w, r)
+    if err != nil {
+        return
+    }
 
 	rsp := dictionary.WordResponse{
 		Word: req.Word,

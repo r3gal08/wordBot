@@ -1,6 +1,8 @@
 # Test code
 curl -X POST http://localhost:8080/api/word -H "Content-Type: application/json" -d '{"word":"hello"}' |jq
 curl -X POST http://localhost:8080/api/word -H "Content-Type: application/json" -d '{"word":"hubris","request": ["definition","synonyms"]}' |jq
+curl -X POST http://localhost:8080/wordLearner -H "Content-Type: application/json" -d '{"word":"moo","request": ["definition"]}'  |jq
+
 
 # Ollama post request
 curl -X POST http://localhost:11434/api/generate      -H "Content-Type: application/json"      -d '{

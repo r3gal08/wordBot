@@ -12,6 +12,8 @@ const apiURL = "https://api.dictionaryapi.dev/api/v2/entries/en/%s"
 /* TODOS:
 	- Add a cacheing system that gets word data from internal DB if available, otherwise fetches from API
 */
+// Function to return all word data from the dictionary API
+// Returns a WordData struct and an error
 func GetWordData(word string) (WordData, error) {
 	url := fmt.Sprintf(apiURL, word)
 
