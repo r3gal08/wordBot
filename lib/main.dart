@@ -87,55 +87,59 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _sendWordToLearn() async {
-    final String word = _wordController.text.trim();
-    if (word.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a word')),
-      );
-      return;
-    }
-
-    // Replace with your backend URL
-    final url = Uri.parse('http://localhost:8080/learnHandler');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'word': word,
-          "request": ["learn"]
-        }), // Convert object to json string
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final receivedWord = responseData['word'];
-        final receivedLearnData = responseData['learnData'];
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  'Received word: $receivedWord, Learn Data: $receivedLearnData')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Failed to send word. Status code: ${response.statusCode}',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
+Future<void> _sendWordToLearn() async {
+  final String word = _wordController.text.trim();
+  if (word.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a word')),
+    );
+    return;
   }
+
+  // Replace with your backend URL
+  final url = Uri.parse('http://localhost:8080/learnHandler');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'word': word,
+        "request": ["learn"]
+      }), // Convert object to json string
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+
+      // Parse the answers and correct_answer from the response
+      final List<String> answers = List<String>.from(responseData['answers']);
+      final int correctAnswer = responseData['correct_answer'];
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Answers: $answers, Correct Answer Index: $correctAnswer',
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Failed to send word. Status code: ${response.statusCode}',
+          ),
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
+}
 
   @override
   void dispose() {
