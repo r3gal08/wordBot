@@ -150,6 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // TODO: We will want to clear the 2x2 and text input data after some time or after a new word is sent
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,9 +194,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: GridView.builder(
                   itemCount: _answers.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+                    crossAxisCount: 2,    // Number of columns
+                    crossAxisSpacing: 10, // Reduced spacing between columns
+                    mainAxisSpacing: 10,  // Reduced spacing between rows
+                    childAspectRatio: 10, // Adjust the width-to-height ratio (higher = wider boxes)
                   ),
                   itemBuilder: (context, index) {
                     Color buttonColor = Colors.blueGrey; // Default color
