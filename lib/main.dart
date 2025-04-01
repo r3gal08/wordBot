@@ -33,6 +33,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _wordController = TextEditingController();
 
+  List<String> _answers = [];
+  int _correctAnswerIndex = -1;
+  int? _selectedAnswerIndex;    // Value can be nullable so we specify this here with '?
+
   Future<void> _sendWordForDefinition() async {
     final String word = _wordController.text.trim();
     if (word.isEmpty) {
@@ -42,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    // TODO: Export local host, port, url, etc to a separate file similar to how I did in my bookBot project
-    // Replace with your backend URL
+    // TODO: This should be pulled in via env file or something similar
     final url = Uri.parse('http://localhost:8080/wordHandler');
 
     try {
@@ -58,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
         }), // Convert object to json string
       );
 
-      // TODO: Here we will handle the json response and display the definition
       if (response.statusCode == 200) {
         // _wordController.clear(); // Clear the text field after success
 
@@ -97,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-  // Replace with your backend URL
+    // TODO: This should be pulled in via env file or something similar
     final url = Uri.parse('http://localhost:8080/learnHandler');
 
     try {
@@ -109,29 +111,20 @@ class _MyHomePageState extends State<MyHomePage> {
         body: jsonEncode({
           'word': word,
           "request": ["learn"]
-      }), // Convert object to json string
+        }),
       );
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
-
-      // Parse the answers and correct_answer from the response
-        final List<String> answers = List<String>.from(responseData['answers']);
-        final int correctAnswer = responseData['correct_answer'];
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Answers: $answers, Correct Answer Index: $correctAnswer',
-            ),
-          ),
-        );
+        setState(() {
+          _answers = List<String>.from(responseData['answers']);
+          _correctAnswerIndex = responseData['correct_answer'];
+          _selectedAnswerIndex = null; // Reset selection
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Failed to send word. Status code: ${response.statusCode}',
-            ),
+            content: Text('Failed to send word. Status code: ${response.statusCode}'),
           ),
         );
       }
@@ -142,10 +135,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  @override
-  void dispose() {
-    _wordController.dispose();
-    super.dispose();
+  void _checkAnswer(int index) {
+    setState(() {
+      _selectedAnswerIndex = index;
+    });
+
+    bool isCorrect = index == _correctAnswerIndex;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isCorrect ? 'Correct!' : 'Wrong! The correct answer is ${_answers[_correctAnswerIndex]}'),
+        backgroundColor: isCorrect ? Colors.green : Colors.red,
+      ),
+    );
   }
 
   @override
@@ -166,6 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 border: OutlineInputBorder(),
               ),
             ),
+
+            // Learn and Definition buttons
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -181,6 +185,51 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+
+            // 2x2 Grid for displaying answers
+            const SizedBox(height: 20),
+            if (_answers.isNotEmpty)
+              Expanded(
+                child: GridView.builder(
+                  itemCount: _answers.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    Color buttonColor = Colors.blueGrey; // Default color
+                    if (_selectedAnswerIndex != null) {
+                      if (index == _correctAnswerIndex) {
+                        buttonColor = Colors.green; // Correct answer
+                      } else if (index == _selectedAnswerIndex) {
+                        buttonColor = Colors.red; // Incorrect answer
+                      }
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        if (_selectedAnswerIndex == null) {
+                          _checkAnswer(index);
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: buttonColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          _answers[index],
+                          style: const TextStyle(fontSize: 18, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
           ],
         ),
       ),
